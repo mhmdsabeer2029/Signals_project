@@ -4,7 +4,7 @@ interface.py --> Unified API
 """
 
 from typing import List , Dict
-# 1. Stage 1 : Bytes <--> LZ77 tokens
+#Stage 1 : Bytes <--> LZ77 tokens
 
 from lz77.lz77_tokens import  Literal, Match, lz77Token
 from lz77.lz77_encoder import lz77_encode
@@ -19,7 +19,7 @@ def tokens_to_bytes(tokens):
     return lz77_decode(tokens)
 
 
-# 2. Stage 2 : LZ77 tokens <--> DEFLATE events
+#Stage 2 : LZ77 tokens <--> DEFLATE events
 
 from Symbol.symbol_converter import events__tokens , tokens__events
 from Symbol.deflate_events import LiteralEvent, MatchEvent, EndEvent, DEFLATEEvent
@@ -32,7 +32,7 @@ def event__token(events: List[DEFLATEEvent]) -> List[lz77Token]:
 
 
 
-# 3. Stage 3 : DEFLATE events <--> Huffman‑coded payload + header
+#Stage 3 : DEFLATE events <--> Huffman‑coded payload + header
 from huffman.encoder import encode_with_huffman
 from huffman.decoder import decode_with_huffman
 
