@@ -49,3 +49,8 @@ class SymbolConverter:
                 # EndEvent does not correspond to any data token
                 pass
         return tokens
+
+def tokens__events(tokens: List[lz77Token])-> List[DEFLATEEvent]:
+    return SymbolConverter().tokens_to_events(list)
+def events__tokens(events: List[DEFLATEEvent]) -> List[lz77Token]:
+    return SymbolConverter().events_to_tokens(events)
