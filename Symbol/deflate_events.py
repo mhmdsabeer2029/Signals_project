@@ -9,7 +9,7 @@ from typing import Union
 
 @dataclass
 class LiteralEvent:
-    """A literal byte symbol (0‑255)."""
+    """A literal byte symbol (0->255)."""
     symbol: int
 
     def __repr__(self):
@@ -28,13 +28,12 @@ class MatchEvent:
     distance_extra: str
 
     def __repr__(self):
-        return (f'MatchEvent({self.length_symbol}, "{self.length_extra}", '
-                f'{self.distance_symbol}, "{self.distance_extra}")')
+        return (f'MatchEvent({self.length_symbol}, "{self.length_extra}", 'f'{self.distance_symbol}, "{self.distance_extra}")')
 
 
 @dataclass
 class EndEvent:
-    """End‑of‑block marker (symbol 256)."""
+    """End of block marker (symbol 256)."""
     symbol: int = 256
 
     def __repr__(self):

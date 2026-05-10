@@ -3,7 +3,7 @@ Count symbol frequencies from a list of DEFLATE events.
 """
 
 from typing import List, Tuple
-from symbol.deflate_events import DEFLATEEvent, LiteralEvent, MatchEvent, EndEvent
+from ..Symbol.deflate_events import DEFLATEEvent, LiteralEvent, MatchEvent, EndEvent
 
 
 def count_frequencies(events: List[DEFLATEEvent]) -> Tuple[List[int], List[int]]:

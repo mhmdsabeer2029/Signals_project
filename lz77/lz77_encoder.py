@@ -1,5 +1,5 @@
 #get tokens
-from .lz77_tokens import *
+from lz77_tokens import *
 from typing import List,Dict
 # Constants for LZ77 encoding
 WINDOW_SIZE=32768

@@ -1,6 +1,6 @@
 # from list of(literals or matches) ---> original bytes
-from .lz77_tokens import *
-from .lz77_encoder import *
+from lz77.lz77_tokens import *
+from lz77.lz77_encoder import *
 
 
 class LZ77Decoder:

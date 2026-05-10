@@ -5,6 +5,7 @@ Encodes / decodes match lengths using the DEFLATE length symbol table.
 
 class LengthCoder:
     # Look‑up tables (shared by all instances – class attributes)
+    # static fields lists
     _base = [
         3, 4, 5, 6, 7, 8, 9, 10,
         11, 13, 15, 17,
@@ -26,18 +27,19 @@ class LengthCoder:
 
     def encode(self, length: int) -> tuple[int, str]:
         """
-        Convert an actual match length (3‑258) into (length_symbol, extra_bits).
-        length_symbol is 257‑285, extra_bits is a string of '0'/'1'.
+        Convert an actual match length (3-258) into (length_symbol, extra_bits).
+        length_symbol is 257-285, extra_bits is a string of '0'/'1'.
         """
         for i, base in enumerate(self._base):
             extra_count = self._extra[i]
-            if extra_count == 0:
+            if extra_count == 0: # if the length extra bits =0 js return its base
                 if length == base:
                     return (257 + i, "")
             else:
-                max_val = base + (1 << extra_count) - 1
-                if base <= length <= max_val:
+                max_val = base + (1 << extra_count) - 1 # bit shift (2^extra) as if the extra = 2 and base =4 , so max val  = 4+ [0 3] as 4+4-1 = 7
+                if base <= length <= max_val: # check in boundaries
                     extra_value = length - base
+                    # next adding the extra bits in a str format with leading zeros "f'0{extra}b " 0--> leading zeros && b for binary base
                     extra_bits = format(extra_value, f'0{extra_count}b')
                     return (257 + i, extra_bits)
         raise ValueError(f"Invalid match length: {length}")

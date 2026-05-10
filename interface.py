@@ -19,6 +19,8 @@ def tokens_to_bytes(tokens):
     return lz77_decode(tokens)
 
 
+bytes_to_tokens(b"\x55\x33\x11")
+
 #Stage 2 : LZ77 tokens <--> DEFLATE events
 
 from Symbol.symbol_converter import events__tokens , tokens__events
@@ -51,4 +53,3 @@ def bits_to_events(payload_bits, lit_lengths, dist_lengths):
     two code‑length tables.
     """
     return decode_with_huffman(payload_bits, lit_lengths, dist_lengths)
-

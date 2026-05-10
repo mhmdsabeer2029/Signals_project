@@ -3,7 +3,7 @@ Encode a list of DEFLATE events into a Huffman‑coded bit string.
 """
 
 from typing import List, Tuple
-from symbol.deflate_events import DEFLATEEvent, LiteralEvent, MatchEvent, EndEvent
+from ..Symbol.deflate_events import DEFLATEEvent, LiteralEvent, MatchEvent, EndEvent
 from .frequency_counter import count_frequencies
 from .tree_builder import build_huffman_tree, extract_code_lengths
 from .canonical_codes import build_canonical_codes

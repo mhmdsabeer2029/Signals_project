@@ -4,7 +4,7 @@ Node used in a Huffman tree.
 
 
 class HuffmanNode:
-    def __init__(self, freq: int, symbol: int = None, left=None, right=None):
+    def __init__(self, freq: int, symbol: int, left, right):
         self.freq = freq
         self.symbol = symbol          # int for leaf, None for internal node
         self.left = left
