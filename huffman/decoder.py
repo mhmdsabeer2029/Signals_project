@@ -4,8 +4,8 @@ Huffman decoder: reads a bit string and reconstructs DEFLATE events.
 
 from typing import List, Dict, Tuple, Optional
 from ..Symbol.deflate_events import LiteralEvent, MatchEvent, EndEvent, DEFLATEEvent
-from .canonical_codes import build_canonical_codes
-from .deflate_constants import LENGTH_EXTRA, DISTANCE_EXTRA
+from huffman.canonical_codes import build_canonical_codes
+from huffman.deflate_constants import LENGTH_EXTRA, DISTANCE_EXTRA
 
 
 class HuffmanDecoder:
