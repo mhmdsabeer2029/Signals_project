@@ -94,6 +94,19 @@ class BitReader:
 
         return number
 
+    def _byte_flush(self) -> str:
+        return bin(self.byte)[2:]
+
+    def read_rest(self) -> str:
+        """read the rest of the file after successfully reading the metadata.
+
+        Returns:
+            str: the rest of the data in the file represented as a string.
+        """
+        piece1 = self._byte_flush()
+        piece2 = "".join(format(byte, "08b") for byte in self.file.read())
+        return piece1 + piece2
+
     def close(self) -> None:
         """Close the file."""
 
