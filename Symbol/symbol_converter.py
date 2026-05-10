@@ -3,10 +3,10 @@ Converts lists of LZ77 tokens ↔ lists of DEFLATE events.
 Uses LengthCoder and DistanceCoder under the hood.
 """
 from typing import List
-from ..lz77.lz77_tokens import lz77Token, Literal, Match
-from Symbol.deflate_events import LiteralEvent, MatchEvent, EndEvent, DEFLATEEvent
-from Symbol.length_coder import LengthCoder
-from Symbol.distance_coder import DistanceCoder
+from lz77.lz77_tokens import lz77Token, Literal, Match
+from symbol.deflate_events import LiteralEvent, MatchEvent, EndEvent, DEFLATEEvent
+from symbol.length_coder import LengthCoder
+from symbol.distance_coder import DistanceCoder
 
 
 class SymbolConverter:

@@ -22,8 +22,8 @@ bytes_to_tokens(b"\x55\x33\x11")
 
 #Stage 2 : LZ77 tokens <--> DEFLATE events
 
-from Symbol.symbol_converter import events__tokens , tokens__events
-from Symbol.deflate_events import LiteralEvent, MatchEvent, EndEvent, DEFLATEEvent
+from symbol.symbol_converter import events__tokens , tokens__events
+from symbol.deflate_events import LiteralEvent, MatchEvent, EndEvent, DEFLATEEvent
 
 def token__event(tokens: List[lz77Token])-> List[DEFLATEEvent]:
     return tokens__events(tokens)
