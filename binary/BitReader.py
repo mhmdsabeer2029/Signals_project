@@ -95,7 +95,14 @@ class BitReader:
         return number
 
     def _byte_flush(self) -> str:
-        return bin(self.byte)[2:]
+        if self.remaining_bits_in_byte == 0:
+            return ""
+
+        # The bits that are still unread are the 'remaining_bits_in_byte' 
+        # least significant bits of 'self.byte'.
+        mask = (1 << self.remaining_bits_in_byte) - 1
+        bits = self.byte & mask
+        return format(bits, f"0{self.remaining_bits_in_byte}b")
 
     def read_rest(self) -> str:
         """read the rest of the file after successfully reading the metadata.
