@@ -10,9 +10,9 @@ This test suite covers:
 """
 
 import unittest
-from .lz77_tokens import Literal, Match
-from .lz77_encoder import lz77_encode, WINDOW_SIZE, MAX_MATCH, MIN_MATCH
-from .lz77_decoder import lz77_decode
+from lz77.lz77_tokens import Literal, Match
+from lz77.lz77_encoder import lz77_encode, WINDOW_SIZE, MAX_MATCH, MIN_MATCH
+from lz77.lz77_decoder import lz77_decode
 
 
 # Constants for test data generation

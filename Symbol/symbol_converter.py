@@ -4,9 +4,9 @@ Uses LengthCoder and DistanceCoder under the hood.
 """
 from typing import List
 from ..lz77.lz77_tokens import lz77Token, Literal, Match
-from deflate_events import LiteralEvent, MatchEvent, EndEvent, DEFLATEEvent
-from length_coder import LengthCoder
-from distance_coder import DistanceCoder
+from Symbol.deflate_events import LiteralEvent, MatchEvent, EndEvent, DEFLATEEvent
+from Symbol.length_coder import LengthCoder
+from Symbol.distance_coder import DistanceCoder
 
 
 class SymbolConverter:
