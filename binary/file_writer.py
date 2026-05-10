@@ -1,7 +1,8 @@
-"""this module handles writing the header of the compressed file."""
+"""this module handles writing the compressed file."""
 
 from math import floor, log2
 from binary.BitWriter import BitWriter
+from interface import bytes_to_tokens, tokens_to_events, events_to_bits
 
 
 def _bw_calculator(M: int) -> int:
@@ -52,15 +53,18 @@ def _pad(num: int, bits: int) -> str:
     return (bits - length_raw_binary) * "0" + raw_binary
 
 
-def header_writer(
-    file_name: str,
-    length_table: list[int],
-    distance_table: list[int],
-    overwrite: bool = False,
-) -> None:
-    # I will not write a docstring for now because I will still add more functionality
-    if len(length_table) != 286 or len(distance_table) != 30:
-        raise ValueError("The length of the table(s) don't match the specification")
+def file_writer(file_name: str, data: bytes, overwrite: bool = False) -> None:
+    """write the compressed file in .sdfl format from raw binary data.
+
+    Args:
+        file_name (str): the name of the output file without the .sdfl extension.
+        data (bytes): the raw bytes we want to compress.
+        overwrite (bool, optional): handling file already exists.
+    """
+
+    tokens = bytes_to_tokens(data)
+    events = tokens_to_events(tokens)
+    payload_bits, length_table, distance_table = events_to_bits(events)
 
     # calculate M from max(table) then calculate the correct bit-width
     LIT_BW = _bw_calculator(max(length_table))
@@ -78,39 +82,4 @@ def header_writer(
             if DIST_BW > 0:
                 writer.write_bits(_pad(distance, DIST_BW))
 
-        # this is a temporary marker at the end of the file for testing
-        # purposes only and will be removed when I add the payload
-        writer.write_bits("1111-1111")
-
-        # payload writing should go here but I will wait until DEFLATE and
-        # Huffman are implemented to put the code for it
-
-
-if __name__ == "__main__":
-    from random import randint
-
-    length_table = [randint(0, 15) for _ in range(286)]
-    distance_table = [randint(0, 10) for _ in range(30)]
-    distance_offset_bytes, distance_offset_bits = divmod(
-        4 + 4 + 286 * _bw_calculator(max(length_table)), 8
-    )
-    payload_offset_bytes, payload_offset_bits = divmod(
-        4
-        + 4
-        + 286 * _bw_calculator(max(length_table))
-        + 30 * _bw_calculator(max(distance_table)),
-        8,
-    )
-
-    print(
-        f"LIT_BW = {_bw_calculator(max(length_table))} \n"
-        f"DIST_BW = {_bw_calculator(max(distance_table))} \n"
-        f"length_table[0:5] {length_table[0:5]} \n"
-        f"length_table[281:286] {length_table[281:286]} \n"
-        f"distance_offset = {hex(distance_offset_bytes)} bytes + {distance_offset_bits} bits \n"
-        f"distance_table[0:5] {distance_table[0:5]} \n"
-        f"distance_table[25:30] {distance_table[25:30]} \n"
-        f"payload_offset = {hex(payload_offset_bytes)} bytes + {payload_offset_bits} bits"
-    )
-
-    header_writer("test.txt", length_table, distance_table, overwrite=True)
+        writer.write_bits(payload_bits)

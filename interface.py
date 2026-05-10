@@ -71,6 +71,7 @@ if __name__ == "__main__":
     t_list = bytes_to_tokens(data)
     e_list = tokens_to_events(t_list)
     bits, l_lens, d_lens = events_to_bits(e_list)
+    print(len(l_lens), len(d_lens))
 
     # Backward
     e_recon = bits_to_events(bits, l_lens, d_lens)
