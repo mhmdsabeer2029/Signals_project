@@ -4,9 +4,9 @@ Encode a list of DEFLATE events into a Huffman-coded bit string.
 
 from typing import List, Tuple
 from symbol.deflate_events import DEFLATEEvent, LiteralEvent, MatchEvent, EndEvent
-from frequency_counter import count_frequencies
-from tree_builder import build_huffman_tree, extract_code_lengths
-from canonical_codes import build_canonical_codes
+from huffman.frequency_counter import count_frequencies
+from huffman.tree_builder import build_huffman_tree, extract_code_lengths
+from huffman.canonical_codes import build_canonical_codes
 
 
 def encode_with_huffman(events: List[DEFLATEEvent]) -> Tuple[str, List[int], List[int]]:

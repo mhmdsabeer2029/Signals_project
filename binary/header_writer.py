@@ -1,7 +1,7 @@
 """this module handles writing the header of the compressed file."""
 
 from math import floor, log2
-from BitWriter import BitWriter
+from binary.BitWriter import BitWriter
 
 
 def _bw_calculator(M: int) -> int:

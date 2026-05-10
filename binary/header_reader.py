@@ -1,6 +1,6 @@
 """This module reads the header of a .sdfl compressed file."""
 
-from BitReader import BitReader
+from binary.BitReader import BitReader
 
 
 def extract_metadata(reader: BitReader) -> dict:

@@ -15,12 +15,14 @@ def bytes_to_tokens(data: bytes):
     """Compress raw bytes into a list of LZ77 tokens (Literals and Matches)."""
     return lz77_encode(data)
 
-bytes_to_tokens(b"\x55\x33\x11")
+tokens = bytes_to_tokens(b"abcabcabcabc")
+print(tokens)
 
 def tokens_to_bytes(tokens):
     """Reconstruct the original bytes from a list of LZ77 tokens."""
     return lz77_decode(tokens)
 
+# print([byte for byte in tokens_to_bytes(tokens)])
 
 # Stage 2 : LZ77 tokens <--> DEFLATE events
 
@@ -31,6 +33,7 @@ from symbol.deflate_events import LiteralEvent, MatchEvent, EndEvent, DEFLATEEve
 def token__event(tokens: List[lz77Token]) -> List[DEFLATEEvent]:
     return tokens__events(tokens)
 
+print(token__event(tokens))
 
 def event__token(events: List[DEFLATEEvent]) -> List[lz77Token]:
     return events__tokens(events)

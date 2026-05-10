@@ -4,7 +4,7 @@ Building a Huffman tree from frequencies and extracting code lengths.
 
 import heapq
 from typing import List, Optional
-from huffman_node import HuffmanNode
+from huffman.huffman_node import HuffmanNode
 
 
 def build_huffman_tree(frequencies: List[int]) -> Optional[HuffmanNode]:

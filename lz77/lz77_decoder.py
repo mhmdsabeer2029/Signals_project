@@ -1,5 +1,5 @@
 from __future__ import annotations
-from lz77_tokens import Literal, Match, lz77Token
+from lz77.lz77_tokens import Literal, Match, lz77Token
 
 
 class LZ77Decoder:
