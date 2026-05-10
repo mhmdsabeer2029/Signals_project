@@ -23,7 +23,7 @@ def _bw_calculator(M: int) -> int:
     if not isinstance(M, int):
         raise TypeError("M must be an integer")
     if M < 0 or M > 15:
-        raise ValueError("M must fall in the range from 0 to 15 inclusive.")
+        raise ValueError(f"Invalid Huffman code length: {M}. Maximum allowed is 15 bits.")
 
     if M == 0:
         return 0
