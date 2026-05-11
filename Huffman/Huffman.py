@@ -39,3 +39,18 @@ def huffman_lengths(tree, huffman_bitlengths, length):
     huffman_lengths(tree.left, huffman_bitlengths, length + 1)
     huffman_lengths(tree.right, huffman_bitlengths, length + 1)
     huffman_bitlengths[tree.symbol] = length
+
+def canonical_huffman(huffman_bitlengths , symbol_codes):
+    count = [0] * 16
+    for length in huffman_bitlengths:
+        count[length] += 1
+    count[0] = 0
+    code = 0
+    next_available_code = [0] * 16
+    for bits in range(1 , 16):
+        code = (code + count[bits - 1]) << 1
+        next_available_code[bits] = code
+    for sym, length in enumerate(huffman_bitlengths):
+        if length != 0:
+            symbol_codes[sym] = next_available_code[length]
+            next_available_code[length] += 1
