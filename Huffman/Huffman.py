@@ -31,3 +31,11 @@ def tree_builder(freq_array):
         heapq.heappush(heap, (parent.freq, parent))
     tree = heap[0][1]
     return tree
+
+def huffman_lengths(tree, huffman_bitlengths, length):
+    if tree.left is None and tree.right is None:
+        huffman_bitlengths[tree.symbol] = max(length, 1)
+        return
+    huffman_lengths(tree.left, huffman_bitlengths, length + 1)
+    huffman_lengths(tree.right, huffman_bitlengths, length + 1)
+    huffman_bitlengths[tree.symbol] = length
