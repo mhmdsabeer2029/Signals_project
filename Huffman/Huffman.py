@@ -5,6 +5,9 @@ class Node:
         self.freq = freq
         self.left = None
         self.right = None
+#added this to fix small bug
+    def __lt__(self, other):
+        return self.freq < other.freq
 
 def frequency_counter(symbols):
     literal_freq = [0] * 286
@@ -37,8 +40,7 @@ def huffman_lengths(tree, huffman_bitlengths, length):
         huffman_bitlengths[tree.symbol] = max(length, 1)
         return
     huffman_lengths(tree.left, huffman_bitlengths, length + 1)
-    huffman_lengths(tree.right, huffman_bitlengths, length + 1)
-    huffman_bitlengths[tree.symbol] = length
+    huffman_lengths(tree.right, huffman_bitlengths, length + 1) #fixed small bug here from extra useless assignment
 
 def canonical_huffman(huffman_bitlengths , symbol_codes):
     count = [0] * 16
