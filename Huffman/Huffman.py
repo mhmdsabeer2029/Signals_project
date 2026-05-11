@@ -16,3 +16,18 @@ def frequency_counter(symbols):
             literal_freq[sym[0]] += 1
             distance_freq[sym[2]] += 1
     return literal_freq, distance_freq
+
+def tree_builder(freq_array):
+    heap = []
+    for sym, freq in enumerate(freq_array):
+        if freq > 0:
+            heapq.heappush(heap, (freq, Node(sym, freq)))
+    while len(heap) != 1:
+        sym1 = heapq.heappop(heap)
+        sym2 = heapq.heappop(heap)
+        parent = Node(None, sym1[0] + sym2[0])
+        parent.left = sym1[1]
+        parent.right = sym2[1]
+        heapq.heappush(heap, (parent.freq, parent))
+    tree = heap[0][1]
+    return tree
