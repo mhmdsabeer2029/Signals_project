@@ -94,13 +94,15 @@ def canonical_huffman(huffman_bitlengths):
         code = (code + count[bits - 1]) << 1
         next_available_code[bits] = code
     symbol_codes = {}
+    code_symbols = {}
     # Symbols are assigned codes in order of their index — this is what makes it canonical
     for sym, length in enumerate(huffman_bitlengths):
         if length != 0:
             # Modified to save the code as a zero-padded binary string to match reference I/O
             symbol_codes[sym] = format(next_available_code[length], f"0{length}b")
+            code_symbols[format(next_available_code[length], f"0{length}b")] = sym
             next_available_code[length] += 1
-    return symbol_codes
+    return symbol_codes , code_symbols
 
 
 def encode_with_huffman(events: List[DEFLATEEvent]) -> Tuple[str, List[int], List[int]]:
@@ -129,8 +131,8 @@ def encode_with_huffman(events: List[DEFLATEEvent]) -> Tuple[str, List[int], Lis
         )
 
     # 4. Generate canonical string representations
-    lit_codes = canonical_huffman(lit_lengths)
-    dist_codes = canonical_huffman(dist_lengths)
+    lit_codes = canonical_huffman(lit_lengths)[0]
+    dist_codes = canonical_huffman(dist_lengths)[0]
 
     # 5. Assemble payload bit sequence
     payload_bits = ""
