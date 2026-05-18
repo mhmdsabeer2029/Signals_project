@@ -24,17 +24,17 @@ def tokens_to_bytes(tokens: list[lz77Token]) -> bytearray:
 # Stage 2 : LZ77 tokens <--> DEFLATE events
 
 from symbol.deflate_events import LiteralEvent, MatchEvent, EndEvent, DEFLATEEvent
-from symbol.symbol_converter import tokens__events, events__tokens
-
+from symbol.stage2_translator import translator_fun 
+from symbol.stage2_decompressor import decopressor_fun 
 
 def tokens_to_events(tokens: list[lz77Token]) -> list[DEFLATEEvent]:
     """Convert LZ77 tokens into DEFLATE events (Literal, Match, and End)."""
-    return tokens__events(tokens)
+    return translator_fun(tokens)
 
 
 def events_to_tokens(events: list[DEFLATEEvent]) -> list[lz77Token]:
     """Convert DEFLATE events back into LZ77 tokens."""
-    return events__tokens(events)
+    return decopressor_fun(events)
 
 
 # Stage 3 : DEFLATE events <--> Huffman‑coded payload + header
