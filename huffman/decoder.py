@@ -1,89 +1,66 @@
-"""
-Huffman decoder: reads a bit string and reconstructs DEFLATE events.
-"""
-
-from typing import List, Dict, Tuple
-from symbol.deflate_events import LiteralEvent, MatchEvent, EndEvent, DEFLATEEvent
-from huffman.canonical_codes import build_canonical_codes
+from huffman.encoder import canonical_huffman
 from huffman.deflate_constants import LENGTH_EXTRA, DISTANCE_EXTRA
+from symbol.deflate_events import MatchEvent, LiteralEvent, EndEvent
 
 
-class HuffmanDecoder:
-    """Decodes a canonical Huffman-coded stream."""
+def decode_with_huffman(payload_bits, lit_lengths, dist_lengths):
+    # Assuming canonical_huffman returns (sym_to_code, code_to_sym)
+    # and we want the code_to_sym dict at index [1]
+    lit_symbols = canonical_huffman(lit_lengths)[1]
+    dist_symbols = canonical_huffman(dist_lengths)[1]
 
-    def __init__(self, lengths: List[int]):
-        self.lengths = lengths
-        self.decode_table: Dict[str, int] = self._build_decode_table()
+    events_list = []
+    flag = True
+    i = 0  # Our global bitstream pointer
 
-    def _build_decode_table(self) -> Dict[str, int]:
-        """Create a reverse mapping: bitstring → symbol."""
-        codes = build_canonical_codes(self.lengths)
-        return {code: symbol for symbol, code in codes.items()}
+    while flag and i < len(payload_bits):
+        # Scan for a Literal/Length code (try windows of size 1 to 15)
+        for length in range(1, 16):
+            current_lit_code = payload_bits[i: i + length]
+            current_lit_symbol = lit_symbols.get(current_lit_code, -1)
 
-    def decode_symbol(self, bits: str, start: int) -> Tuple[int, int]:
-        """
-        Read one Huffman symbol from 'bits' starting at 'start'.
-        Returns (symbol, number of bits consumed).
-        """
-        max_len = min(16, len(bits) - start)
-        for length in range(1, max_len + 1):
-            if start + length > len(bits):
-                break
-            code = bits[start : start + length]
-            if code in self.decode_table:
-                return self.decode_table[code], length
-        raise ValueError(f"Invalid Huffman code at position {start}")
+            if current_lit_symbol != -1:
+                # We found a valid symbol! Advance past its Huffman code bits
+                i += length
 
+                if current_lit_symbol == 256:
+                    events_list.append(EndEvent())
+                    flag = False
+                    break  # Break the inner length loop
 
-def decode_with_huffman(
-    payload_bits: str, lit_lengths: List[int], dist_lengths: List[int]
-) -> List[DEFLATEEvent]:
-    """
-    Decode a Huffman-coded bit string back into DEFLATE events.
-    """
-    lit_decoder = HuffmanDecoder(lit_lengths)
-    dist_decoder = HuffmanDecoder(dist_lengths)
+                elif current_lit_symbol < 256:
+                    events_list.append(LiteralEvent(current_lit_symbol))
+                    break  # Break the inner length loop to get next literal
 
-    events: List[DEFLATEEvent] = []
-    pos = 0
+                else:
+                    # It's a MATCH! (257 to 285)
+                    # 1. Pull the length extra bits
+                    num_len_extra = LENGTH_EXTRA[current_lit_symbol - 257]
+                    lit_extra = payload_bits[i: i + num_len_extra]
+                    i += num_len_extra  # Advance past the extra length bits
 
-    while pos < len(payload_bits):
-        # 1. Decode literal/length symbol
-        symbol, consumed = lit_decoder.decode_symbol(payload_bits, pos)
-        pos += consumed
+                    # 2. IMMEDIATELY start scanning for the distance symbol
+                    current_dist_symbol = -1
+                    for dist_length in range(1, 16):
+                        current_dist_code = payload_bits[i: i + dist_length]
+                        current_dist_symbol = dist_symbols.get(current_dist_code, -1)
 
-        # 2. Interpret symbol
-        if 0 <= symbol <= 255:
-            events.append(LiteralEvent(symbol))
+                        if current_dist_symbol != -1:
+                            i += dist_length  # Advance past distance Huffman code bits
+                            break
 
-        elif symbol == 256:
-            events.append(EndEvent())
-            break
+                    # 3. Pull the distance extra bits
+                    num_dist_extra = DISTANCE_EXTRA[current_dist_symbol]
+                    dist_extra = payload_bits[i: i + num_dist_extra]
+                    i += num_dist_extra  # Advance past extra distance bits
 
-        elif 257 <= symbol <= 285:
-            # Match: read length extra bits
-            index = symbol - 257
-            len_extra_count = LENGTH_EXTRA[index]
-            len_extra_bits = ""
-            if len_extra_count > 0:
-                len_extra_bits = payload_bits[pos : pos + len_extra_count]
-                pos += len_extra_count
+                    # 4. Pack and store the MatchEvent
+                    events_list.append(MatchEvent(
+                        current_lit_symbol,
+                        lit_extra,
+                        current_dist_symbol,
+                        dist_extra
+                    ))
+                    break  # Break out of the original length loop to start next token
 
-            # Decode distance symbol
-            dist_symbol, consumed = dist_decoder.decode_symbol(payload_bits, pos)
-            pos += consumed
-
-            # Read distance extra bits
-            dist_extra_count = DISTANCE_EXTRA[dist_symbol]
-            dist_extra_bits = ""
-            if dist_extra_count > 0:
-                dist_extra_bits = payload_bits[pos : pos + dist_extra_count]
-                pos += dist_extra_count
-
-            events.append(
-                MatchEvent(symbol, len_extra_bits, dist_symbol, dist_extra_bits)
-            )
-        else:
-            raise ValueError(f"Unknown literal/length symbol: {symbol}")
-
-    return events
+    return events_list
