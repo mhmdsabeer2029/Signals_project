@@ -52,8 +52,21 @@ python main.py -d myfile.txt.sdfl
 ```
 
 ### Options
-- `-v`, `--verbose`: Show detailed compression statistics, debug offsets, and Huffman table summaries.
 - `-o`, `--overwrite`: Overwrite existing output files.
+
+---
+
+## 🧪 Testing
+
+The project includes built-in validation to ensure the integrity of each stage.
+
+```bash
+# Run LZ77 unit tests
+python3 lz77/test_lz77.py
+
+# Run the full pipeline round-trip validation
+python3 interface.py
+```
 
 ---
 
