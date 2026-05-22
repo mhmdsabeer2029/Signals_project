@@ -135,18 +135,18 @@ def encode_with_huffman(events: List[DEFLATEEvent]) -> Tuple[str, List[int], Lis
     dist_codes = canonical_huffman(dist_lengths)[0]
 
     # 5. Assemble payload bit sequence
-    payload_bits = ""
+    payload_bits = []
     for event in events:
         if isinstance(event, LiteralEvent):
-            payload_bits += lit_codes[event.symbol]
-
+            payload_bits.append(lit_codes[event.symbol])
         elif isinstance(event, MatchEvent):
-            payload_bits += lit_codes[event.length_symbol]
-            payload_bits += event.length_extra
-            payload_bits += dist_codes[event.distance_symbol]
-            payload_bits += event.distance_extra
-
+            payload_bits.append(lit_codes[event.length_symbol])
+            payload_bits.append(event.length_extra)
+            payload_bits.append(dist_codes[event.distance_symbol])
+            payload_bits.append(event.distance_extra)
         elif isinstance(event, EndEvent):
-            payload_bits += lit_codes[event.symbol]
+            payload_bits.append(lit_codes[event.symbol])
+
+    payload_bits = "".join(payload_bits)
 
     return payload_bits, lit_lengths, dist_lengths
